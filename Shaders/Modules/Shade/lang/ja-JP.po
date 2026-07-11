@@ -1,0 +1,24 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja-JP\n"
+
+msgid "Shade"
+msgstr "陰影"
+
+msgid "SDF Type"
+msgstr "SDFタイプ"
+
+msgid "SDF"
+msgstr "SDF"
+
+msgid "ShadeOffset"
+msgstr "影オフセット"
+
+msgid "SDF Map"
+msgstr "SDFマップ"
+
+msgid "Blend Vertical Light Vector"
+msgstr "ライトの縦方向ベクトルを合成"

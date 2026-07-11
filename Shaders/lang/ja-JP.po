@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja-JP\n"
+
+msgid "Opaque"
+msgstr "不透明"
+
+msgid "Cutout"
+msgstr "カットアウト"
+
+msgid "Transparent"
+msgstr "半透明"
+
+msgid "Shadow Bias"
+msgstr "Shadow Bias"
+
+msgid "Outline Width"
+msgstr "アウトラインの幅"
+
+msgid "Outline Color"
+msgstr "アウトラインの色"
+
+msgid "Outline Z Offset"
+msgstr "アウトラインのZ Offset"
+
+msgid "From Vertex Color"
+msgstr "頂点カラーから取得"
+
+msgid "Backlight Sharpness"
+msgstr "逆光ライトのトゥーン度"
+
+msgid "Backlight Range"
+msgstr "逆光ライトの範囲"
+
+msgid "Fur"
+msgstr "ファーノイズ"
+
+msgid "Fur Noise"
+msgstr "ファーノイズ"
+
+msgid "Noise Tiling"
+msgstr "ノイズタイリング"
+
+msgid "Subdivision"
+msgstr "細分化"
+
+msgid "Vector"
+msgstr "方向"
+
+msgid "Rim Light Color"
+msgstr "リムライトカラー"
+
+msgid "Fresnel Power"
+msgstr "細さ"
+
+msgid "Anti Light"
+msgstr "明るいほど弱める"

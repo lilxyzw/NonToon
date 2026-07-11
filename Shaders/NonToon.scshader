@@ -1,0 +1,364 @@
+Shader "NonToon"
+{
+    Properties
+    {
+        __SC_SHADERLAB_properties__
+
+        // Integer型だと動かないのでIntを使用
+        [SCModule()][SCFoldout(__Stencil)]
+            [SCBox]
+            [SCRangeInt(0,255)]                             _StencilRef  ("Ref", Int) = 0
+            [SCEnum(UnityEngine.Rendering.CompareFunction)] _StencilComp ("Comp", Int) = 8
+            [SCEnum(UnityEngine.Rendering.StencilOp)]       _StencilPass ("Pass", Int) = 0
+            [SCBoxEnd]
+
+            [SCBox]
+            [SCRangeInt(0,255)]                             _OutlineStencilRef  ("Outline Ref", Int) = 0
+            [SCEnum(UnityEngine.Rendering.CompareFunction)] _OutlineStencilComp ("Outline Comp", Int) = 8
+            [SCEnum(UnityEngine.Rendering.StencilOp)]       _OutlineStencilPass ("Outline Pass", Int) = 0
+            [SCBoxEnd]
+        [SCFoldoutEnd]
+
+        [SCFoldout(__Rendering)]
+            [SCBox]
+            [SCEnum(Off, 0, Front, 1, Back, 2)]       _Cull            ("Cull", Int) = 2
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _SrcBlend        ("SrcBlendRGB", Int) = 1
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _DstBlend        ("DstBlendRGB", Int) = 0
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _SrcBlendAlpha   ("SrcBlendAlpha", Int) = 1
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _DstBlendAlpha   ("DstBlendAlpha", Int) = 10
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _SrcBlendFA      ("SrcBlendRGB ForwardAdd", Int) = 1
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _DstBlendFA      ("DstBlendRGB ForwardAdd", Int) = 1
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _SrcBlendAlphaFA ("SrcBlendAlpha ForwardAdd", Int) = 0
+            [SCEnum(UnityEngine.Rendering.BlendMode)] _DstBlendAlphaFA ("DstBlendAlpha ForwardAdd", Int) = 1
+            [SCToggle]                                _ZWrite          ("ZWrite", Int) = 1
+            [SCToggle]                                _AlphaToMask     ("AlphaToMask", Int) = 0
+            [SCBoxEnd]
+        [SCFoldoutEnd]
+
+        [HideInInspector]_LTCGI("",Int) = 0
+    }
+
+    HLSLINCLUDE
+    // intまたはuintプロパティがあるとVulkanでコンパイルに失敗
+    #pragma skip_variants DOTS_INSTANCING_ON
+    __SC_SHADERKEYWORDS__
+    ENDHLSL
+
+    SubShader
+    {
+        PackageRequirements
+        {
+            "com.unity.render-pipelines.universal": "17.0"
+        }
+
+        Tags
+        {
+            "RenderType" = "Opaque"
+            "RenderPipeline" = "UniversalPipeline"
+            "UniversalMaterialType" = "Lit"
+            "IgnoreProjector" = "True"
+        }
+
+        Pass
+        {
+            Name "Forward"
+            Tags { "LightMode" = "UniversalForward" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull [_Cull]
+            ZWrite [_ZWrite]
+            Blend [_SrcBlend] [_DstBlend], [_SrcBlendAlpha] [_DstBlendAlpha]
+            AlphaToMask [_AlphaToMask]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp_forward.hlsl"
+            #include "urp.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "Outline"
+            Tags { "LightMode" = "UniversalForwardOnly" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull Front
+            ZWrite [_ZWrite]
+            Blend [_SrcBlend] [_DstBlend], [_SrcBlendAlpha] [_DstBlendAlpha]
+            AlphaToMask [_AlphaToMask]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #define OUTLINE
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp_forward.hlsl"
+            #include "urp.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp_shadowcaster.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+            ZWrite On
+            ColorMask R
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp_depthonly.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthNormals"
+            Tags { "LightMode" = "DepthNormals" }
+            ZWrite On
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp_depthnormals.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "MotionVectors"
+            Tags { "LightMode" = "MotionVectors" }
+            ColorMask RG
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp_xrmotionvectors.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "XRMotionVectors"
+            Tags { "LightMode" = "XRMotionVectors" }
+            ColorMask RGBA
+            Cull [_Cull]
+
+            Stencil
+            {
+                WriteMask 1
+                Ref 1
+                Comp Always
+                Pass Replace
+            }
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp_xrmotionvectors.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "Meta"
+            Tags { "LightMode" = "Meta" }
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 2.0
+            #pragma vertex UniversalVertexMeta
+            #pragma fragment UniversalFragmentMetaLit
+
+            #pragma shader_feature EDITOR_VISUALIZATION
+
+            #define _BaseMap_ST float4(1,1,0,0)
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UniversalMetaPass.hlsl"
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/urp.hlsl"
+
+            __SC_URP_properties__
+
+            half4 UniversalFragmentMetaLit(Varyings input) : SV_Target
+            {
+                MetaInput metaInput;
+                metaInput.Albedo = SCSample(_BaseTexture, sampler_BaseTexture, input.uv).rgb;
+                metaInput.Emission = 0;
+                return UniversalFragmentMeta(input, metaInput);
+            }
+
+            ENDHLSL
+        }
+    }
+
+    SubShader
+    {
+        Tags
+        {
+            "RenderType" = "Opaque"
+            "RenderPipeline" = ""
+            "LTCGI" = "_LTCGI"
+        }
+
+        Pass
+        {
+            Name "Forward"
+            Tags { "LightMode" = "ForwardBase" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull [_Cull]
+            ZWrite [_ZWrite]
+            Blend [_SrcBlend] [_DstBlend], [_SrcBlendAlpha] [_DstBlendAlpha]
+            AlphaToMask [_AlphaToMask]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forward.hlsl"
+            #include "birp.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "Outline"
+            Tags { "LightMode" = "ForwardBase" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull Front
+            ZWrite [_ZWrite]
+            Blend [_SrcBlend] [_DstBlend], [_SrcBlendAlpha] [_DstBlendAlpha]
+            AlphaToMask [_AlphaToMask]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #define OUTLINE
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forward.hlsl"
+            #include "birp.hlsl"
+            ENDHLSL
+        }
+
+        Pass {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+
+            Cull [_Cull]
+            ZWrite On
+            ZTest LEqual
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_shadowcaster.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "Meta"
+            Tags { "LightMode" = "Meta" }
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 2.0
+            
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #pragma shader_feature EDITOR_VISUALIZATION
+            #include "UnityCG.cginc"
+            #include "UnityMetaPass.cginc"
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp.hlsl"
+
+            __SC_BIRP_properties__
+
+            struct appdata
+            {
+                float4 vertex   : POSITION;
+                float2 uv0      : TEXCOORD0;
+                float2 uv1      : TEXCOORD1;
+                float2 uv2      : TEXCOORD2;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f_meta
+            {
+                float4 pos      : SV_POSITION;
+                float2 uv       : TEXCOORD0;
+                #ifdef EDITOR_VISUALIZATION
+                float2 vizUV        : TEXCOORD1;
+                float4 lightCoord   : TEXCOORD2;
+                #endif
+            };
+
+            v2f_meta vert(appdata v)
+            {
+                v2f_meta o;
+                o.pos = UnityMetaVertexPosition(v.vertex, v.uv1.xy, v.uv2.xy, unity_LightmapST, unity_DynamicLightmapST);
+                o.uv = v.uv0;
+                #ifdef EDITOR_VISUALIZATION
+                o.vizUV = 0;
+                o.lightCoord = 0;
+                if (unity_VisualizationMode == EDITORVIZ_TEXTURE)
+                    o.vizUV = UnityMetaVizUV(unity_EditorViz_UVIndex, v.uv0.xy, v.uv1.xy, v.uv2.xy, unity_EditorViz_Texture_ST);
+                else if (unity_VisualizationMode == EDITORVIZ_SHOWLIGHTMASK)
+                {
+                    o.vizUV = v.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
+                    o.lightCoord = mul(unity_EditorViz_WorldToLight, mul(unity_ObjectToWorld, float4(v.vertex.xyz, 1)));
+                }
+                #endif
+                return o;
+            }
+
+            float4 frag(v2f_meta i) : SV_Target
+            {
+                UnityMetaInput o;
+                UNITY_INITIALIZE_OUTPUT(UnityMetaInput, o);
+
+                o.Albedo = SCSample(_BaseTexture, sampler_BaseTexture, i.uv).rgb;
+                #ifdef EDITOR_VISUALIZATION
+                o.VizUV = i.vizUV;
+                o.LightCoord = i.lightCoord;
+                #endif
+                o.SpecularColor = 0;
+                o.Emission = 0;
+
+                return UnityMetaFragment(o);
+            }
+            ENDHLSL
+        }
+    }
+    CustomEditor "SCMaterialEditor"
+}

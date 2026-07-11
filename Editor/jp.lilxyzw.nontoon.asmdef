@@ -1,0 +1,25 @@
+{
+    "name": "jp.lilxyzw.nontoon",
+    "rootNamespace": "jp.lilxyzw.nontoon",
+    "references": [
+        "jp.lilxyzw.shadercore",
+        "jp.lilxyzw.outlinesmoother"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "jp.lilxyzw.outlinesmoother",
+            "expression": "1.1",
+            "define": "LIL_OUTLINESMOOTHER"
+        }
+    ],
+    "noEngineReferences": false
+}

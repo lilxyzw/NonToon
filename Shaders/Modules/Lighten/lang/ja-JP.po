@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja-JP\n"
+
+msgid "Lighten"
+msgstr "Lighten"
+
+msgid "Light Boost"
+msgstr "ライトブースト"
+
+msgid "As Emission"
+msgstr "エミッション化"
