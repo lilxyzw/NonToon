@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using jp.lilxyzw.shadercore;
 using UnityEditor;
-using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
 #if !UNITY_6000_1_OR_NEWER
@@ -64,21 +64,21 @@ namespace jp.lilxyzw.nontoon
                 Property.intValue = newValue;
                 if (newValue == 0)
                 {
-                    SetValue("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                    SetValue("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    SetValue("_SrcBlend", (int)BlendMode.One);
+                    SetValue("_DstBlend", (int)BlendMode.Zero);
                     SetValue("_AlphaToMask", 0);
                 }
                 else if (newValue == 1)
                 {
-                    SetValue("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                    SetValue("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    SetValue("_SrcBlend", (int)BlendMode.One);
+                    SetValue("_DstBlend", (int)BlendMode.Zero);
                     var _NTDitherTex = MaterialEditor.GetMaterialProperty(Property.targets, "_NTDitherTex");
                     if (!_NTDitherTex.hasMixedValue) SetValue("_AlphaToMask", _NTDitherTex.textureValue != null ? 0 : 1);
                 }
                 else if (newValue == 2)
                 {
-                    SetValue("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    SetValue("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    SetValue("_SrcBlend", (int)BlendMode.SrcAlpha);
+                    SetValue("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
                     SetValue("_AlphaToMask", 0);
                 }
                 using var so = new SerializedObject(Property.targets);
@@ -93,7 +93,7 @@ namespace jp.lilxyzw.nontoon
                 }
                 else if (newValue == 2)
                 {
-                    m_CustomRenderQueue.intValue = 3000;
+                    m_CustomRenderQueue.intValue = GraphicsSettings.currentRenderPipeline ? 3000 : 2460;
                 }
                 so.ApplyModifiedProperties();
                 SCUpdateEvent.Invoke();

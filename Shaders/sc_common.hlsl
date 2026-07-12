@@ -24,7 +24,7 @@ void SCVertexPost(inout SCVertexData vertex, SCPositionAndDirection camera, SCPo
     #if defined(UNIVERSAL_PIPELINE_CORE_INCLUDED)
     bias *= 0.5;
     #endif
-    bias *= saturate(vertex.position.y + 0.3);
+    //bias *= saturate(vertex.position.y + 0.3);
     #if defined(SHADOWS_DEPTH)
         if(UNITY_MATRIX_P._m33 == 0.0) bias = 0;
     #endif
