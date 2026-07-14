@@ -98,7 +98,12 @@ half4 frag(v2f i, bool isFront : SV_IsFrontFace) : SV_Target
     sd.maskTexture = _SharedMask;
     sd.gradientsTexture = _SharedGradients;
 
+    // Since sampler_BaseTexture is shared with other textures, we must retain a reference to _BaseTexture in some way.
+    // Otherwise the compiler may remove the definition of _BaseTexture completely, which leads to compile error.
+    // Here we cache the sampled value and add it with small enough scale after "base" phases.
+    half4 cachedAlbedoAlpha = sd.albedoAlpha;
     __SC_PHASE_base__
+    sd.albedoAlpha += cachedAlbedoAlpha * 0.000001;
 
     sd.albedoAlpha = saturate(sd.albedoAlpha);
     sd.col = sd.albedoAlpha;
