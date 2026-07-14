@@ -56,7 +56,7 @@ half4 frag(v2f i, bool isFront : SV_IsFrontFace) : SV_Target
     SCPositionAndDirection camera = SCGetCameraData();
     SCPositionAndDirection head = SCGetHeadData();
     SCPositionAndDirection headBone = SCGetHeadBoneData();
-    SCVertexData vertex = FromPixelInput(i, camera, head, headBone, GetOddNegativeScale(), isFront);
+    SCVertexData vertex = FromPixelInput(i, camera, head, headBone, SCTangentScale(), isFront);
     vertex.shadowOffset = _NTShadowBias * 0.5;
 
     // Custom Data

@@ -55,11 +55,11 @@ half4 frag(v2f i, bool isFront : SV_IsFrontFace) : SV_Target
     SCPositionAndDirection camera = SCGetCameraData();
     SCPositionAndDirection head = SCGetHeadData();
     SCPositionAndDirection headBone = SCGetHeadBoneData();
-    SCVertexData vertex = FromPixelInput(i, camera, head, headBone, unity_WorldTransformParams.w, isFront);
+    SCVertexData vertex = FromPixelInput(i, camera, head, headBone, SCTangentScale(), isFront);
     vertex.shadowOffset = _NTShadowBias * 0.5;
 
     // Custom Data
-    SCCustomData cd = (SCCustomData)cd;
+    SCCustomData cd = (SCCustomData)0;
 
     // Screen Space Rimlighting
     cd.screenrim = 0;
@@ -105,7 +105,7 @@ half4 frag(v2f i, bool isFront : SV_IsFrontFace) : SV_Target
     sd.N = normalize(mul(sd.N, vertex.TBN));
     sd.N_detail = normalize(mul(sd.N_detail, vertex.TBN));
     sd.T = normalize(vertex.T - sd.N_detail * dot(sd.N_detail, vertex.T));
-    sd.B = normalize(cross(sd.N_detail, sd.T) * vertex.crossDirection * unity_WorldTransformParams.w);
+    sd.B = normalize(cross(sd.N_detail, sd.T) * vertex.crossDirection * SCTangentScale());
 
     sd.roughness = saturate(_NormalMapWithRoughness ? sd.roughness : _Roughness);
 

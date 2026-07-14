@@ -2,13 +2,13 @@ void AppendFur(inout TriangleStream<v2f> outStream, v2f input[3], SCPositionAndD
 {
     v2f output = SCInterpolateV2F(input, factor);
 
-    SCVertexData vertex = FromPixelInput(output, camera, head, headBone, GetOddNegativeScale(), true);
+    SCVertexData vertex = FromPixelInput(output, camera, head, headBone, SCTangentScale(), true);
     SCOutputSVPosition(output, vertex, camera, head, headBone);
     output.customV2f.furVector = -1;
     outStream.Append(output);
 
     output.position += input[0].customV2f.furVector * factor.x + input[1].customV2f.furVector * factor.y + input[2].customV2f.furVector * factor.z;
-    vertex = FromPixelInput(output, camera, head, headBone, GetOddNegativeScale(), true);
+    vertex = FromPixelInput(output, camera, head, headBone, SCTangentScale(), true);
     SCOutputSVPosition(output, vertex, camera, head, headBone);
     output.customV2f.furVector = 1;
     outStream.Append(output);
