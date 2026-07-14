@@ -249,6 +249,29 @@ Shader "NonToon"
 
         Pass
         {
+            Name "ForwardAdd"
+            Tags { "LightMode" = "ForwardAdd" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull [_Cull]
+            ZWrite Off
+            Blend SrcAlpha One, Zero One
+            AlphaToMask [_AlphaToMask]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forwardadd.hlsl"
+            #include "birp.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
             Name "Outline"
             Tags { "LightMode" = "ForwardBase" }
 
@@ -267,6 +290,30 @@ Shader "NonToon"
             #pragma target 5.0
             #define OUTLINE
             #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forward.hlsl"
+            #include "birp.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "OutlineAdd"
+            Tags { "LightMode" = "ForwardAdd" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull Front
+            ZWrite Off
+            Blend SrcAlpha One, Zero One
+            AlphaToMask [_AlphaToMask]
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #define OUTLINE
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forwardadd.hlsl"
             #include "birp.hlsl"
             ENDHLSL
         }

@@ -272,6 +272,28 @@ Shader "NonToonFur"
 
         Pass
         {
+            Name "ForwardAdd"
+            Tags { "LightMode" = "ForwardAdd" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull Off
+            ZWrite On
+            Blend SrcAlpha One, Zero One
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forwardadd.hlsl"
+            #include "birp.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
             Name "Fur"
             Tags { "LightMode" = "ForwardBase" }
 
@@ -296,6 +318,37 @@ Shader "NonToonFur"
                 float3 furVector;
             };
             #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forward.hlsl"
+            #include "birp.hlsl"
+            #include "NonToonFur.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ForwardAdd"
+            Tags { "LightMode" = "ForwardAdd" }
+
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp [_StencilComp]
+                Pass [_StencilPass]
+            }
+            Cull Off
+            ZWrite On
+            Blend One One, Zero One
+            AlphaToMask On
+
+            HLSLPROGRAM
+            #pragma target 5.0
+            #pragma geometry geom
+            #define NT_FUR
+            #define SC_CUSTOM_V2F
+            struct SCCustomV2F
+            {
+                float3 furVector;
+            };
+            #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_forwardadd.hlsl"
             #include "birp.hlsl"
             #include "NonToonFur.hlsl"
             ENDHLSL

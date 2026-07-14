@@ -1,13 +1,13 @@
 {
   "name": "jp.lilxyzw.nontoon",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "displayName": "NonToon",
   "description": "",
   "unity": "2022.3",
   "hideInEditor": false,
-  "url" : "https://github.com/lilxyzw/NonToon/releases/download/0.1.2/jp.lilxyzw.nontoon-0.1.2.zip?",
+  "url" : "https://github.com/lilxyzw/NonToon/releases/download/0.1.3/jp.lilxyzw.nontoon-0.1.3.zip?",
   "repo" : "https://lilxyzw.github.io/vpm-repos/vpm.json",
   "vpmDependencies": {
-    "jp.lilxyzw.shadercore": "^0.1.4"
+    "jp.lilxyzw.shadercore": "^0.1.5"
   }
 }
