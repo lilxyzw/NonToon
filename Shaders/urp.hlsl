@@ -1,4 +1,4 @@
-void SCCalculateEnvironmentLight(inout SCLightData lightSum, inout half3 env, inout SCShadingData sd, inout SCCustomData cd, SCVertexData vertex, half4 SHAr, half4 SHAg, half4 SHAb, half4 SHBr, half4 SHBg, half4 SHBb, half4 SHC)
+void SCCalculateEnvironmentLight(inout SCLightData lightSum, inout half3 env, inout SCShadingData sd, inout SCCustomData cd, SCVertexData vertex, half4 SHAr, half4 SHAg, half4 SHAb, half4 SHBr, half4 SHBg, half4 SHBb)
 {
     half4 vB = vertex.Head.xyzz * vertex.Head.yzzx;
     // L0 L2 average
@@ -168,7 +168,7 @@ half4 frag(v2f i, bool isFront : SV_IsFrontFace) : SV_Target
     }
     else if (_RenderingMode == 2)
     {
-        clip(sd.col.a - _Cutoff);
+        // Transparent mode: keep alpha for blending, no clipping
     }
     #endif
 

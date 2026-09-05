@@ -81,10 +81,8 @@ void SCPixelClip(v2f i, bool isFront, float bitangentDir)
     }
     else if (_RenderingMode == 2)
     {
-        clip(sd.col.a - _Cutoff);
+        // Transparent mode: keep alpha for blending, no clipping
     }
-
-    if (_RenderingMode == 2) clip(sd.col.a - (_NTDitherTex[uint2(i.pos.xy)%4].r * 255 + 1) / (15+2));
     #endif
 }
 
