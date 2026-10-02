@@ -22,8 +22,14 @@ void AppendFur(inout TriangleStream<v2f> outStream, v2f input[3], SCPositionAndD
 [maxvertexcount(16)]
 void geom(triangle v2f input[3], inout TriangleStream<v2f> outStream, uint InstanceID : SV_GSInstanceID)
 {
-    #if defined(NT_FUR_ONEPASS)
+    UNITY_SETUP_INSTANCE_ID(input[0]);
+    SCPositionAndDirection camera = SCGetCameraData();
+    SCPositionAndDirection head = SCGetHeadData();
+    SCPositionAndDirection headBone = SCGetHeadBoneData();
+
     if (InstanceID == 0)
+
+    #if defined(NT_FUR_ONEPASS)
     {
         input[0].customV2f.furVector = -1;
         input[1].customV2f.furVector = -1;
@@ -31,24 +37,18 @@ void geom(triangle v2f input[3], inout TriangleStream<v2f> outStream, uint Insta
         outStream.Append(input[0]);
         outStream.Append(input[1]);
         outStream.Append(input[2]);
-        outStream.RestartStrip();
     }
     else if (InstanceID == 1)
-    #else
-    if (InstanceID == 0)
     #endif
+
     {
-        UNITY_SETUP_INSTANCE_ID(input[0]);
-        SCPositionAndDirection camera = SCGetCameraData();
-        SCPositionAndDirection head = SCGetHeadData();
-        SCPositionAndDirection headBone = SCGetHeadBoneData();
-        if(_FurSubdivision == 1)
+        if(_FurSubdivision <= 1)
         {
             AppendFur(outStream, input, camera, head, headBone, float3(1.0, 0.0, 0.0) / 1.0);
             AppendFur(outStream, input, camera, head, headBone, float3(0.0, 1.0, 0.0) / 1.0);
             AppendFur(outStream, input, camera, head, headBone, float3(0.0, 0.0, 1.0) / 1.0);
         }
-        else if(_FurSubdivision >= 2)
+        else
         {
             AppendFur(outStream, input, camera, head, headBone, float3(1.0, 0.0, 0.0) / 1.0);
             AppendFur(outStream, input, camera, head, headBone, float3(0.0, 1.0, 1.0) / 2.0);
@@ -58,26 +58,19 @@ void geom(triangle v2f input[3], inout TriangleStream<v2f> outStream, uint Insta
             AppendFur(outStream, input, camera, head, headBone, float3(1.0, 1.0, 0.0) / 2.0);
         }
         AppendFur(outStream, input, camera, head, headBone, float3(1.0, 0.0, 0.0) / 1.0);
-        outStream.RestartStrip();
     }
     else
     {
         if(_FurSubdivision >= 3)
         {
-            UNITY_SETUP_INSTANCE_ID(input[0]);
-            SCPositionAndDirection camera = SCGetCameraData();
-            SCPositionAndDirection head = SCGetHeadData();
-            SCPositionAndDirection headBone = SCGetHeadBoneData();
-            AppendFur(outStream, input, camera, head, headBone, float3(1.0, 0.0, 0.0) / 1.0);
+            AppendFur(outStream, input, camera, head, headBone, float3(1.0, 1.0, 0.0) / 2.0);
             AppendFur(outStream, input, camera, head, headBone, float3(1.0, 4.0, 1.0) / 6.0);
             AppendFur(outStream, input, camera, head, headBone, float3(0.0, 1.0, 1.0) / 2.0);
             AppendFur(outStream, input, camera, head, headBone, float3(1.0, 1.0, 4.0) / 6.0);
             AppendFur(outStream, input, camera, head, headBone, float3(1.0, 0.0, 1.0) / 2.0);
             AppendFur(outStream, input, camera, head, headBone, float3(4.0, 1.0, 1.0) / 6.0);
             AppendFur(outStream, input, camera, head, headBone, float3(1.0, 1.0, 0.0) / 2.0);
-            AppendFur(outStream, input, camera, head, headBone, float3(1.0, 0.0, 0.0) / 1.0);
-            outStream.RestartStrip();
         }
     }
-
+    outStream.RestartStrip();
 }
