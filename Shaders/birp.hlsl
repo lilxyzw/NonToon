@@ -21,7 +21,7 @@ void SCCalculateEnvironmentLight(inout SCLightData lightSum, inout half3 env, in
     half NdotL = dot(sd.N,sd.L);
     half VdotL = dot(vertex.Head,sd.L);
     half fakerim = saturate((NdotL - VdotL - 0.5) * 2) * saturate(NdotL*3);
-    env += envF + saturate(envB - envF) * fakerim * fakerim;
+    env += envF + saturate(envB - envF) * fakerim * fakerim * cd.screenrim;
 
     // Rampの影を乗算するので少し明るくしてバランスをとる
     env *= 1.2;
@@ -32,6 +32,9 @@ void SCCalculateLight(inout SCLightData lightSum, inout SCShadingData sd, inout 
     __SC_PHASE_light__
 
     lightSum.direction += light.direction * dot(light.color, 0.333333);
+
+    // 影なしDirectionalでは逆光時の処理をしない
+    #if !((defined(UNITY_PASS_FORWARDBASE) || defined(DIRECTIONAL)) && !defined(SHADOWS_SCREEN))
     {
         half factor = saturate(dot(light.direction,vertex.Head) * 1 + 0.25);
         half NdotL = dot(sd.N,light.direction);
@@ -43,9 +46,13 @@ void SCCalculateLight(inout SCLightData lightSum, inout SCShadingData sd, inout 
         #endif
         light.color *= saturate(factor + rim * rim);
     }
+    #endif
+
     lightSum.color += light.color;
 }
 
+#define VRCLV_MODULE_POINTLIGHT_NORMAL normalize(lerp(vertex.Head, sd.N_detail, cd.screenrim))
+#define VRCLV_MODULE_POINTLIGHT_SHADING 1
 #include "Packages/jp.lilxyzw.shadercore/ShaderLibrary/birp_lighting.hlsl"
 
 half4 frag(v2f i, bool isFront : SV_IsFrontFace) : SV_Target
