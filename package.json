@@ -8,6 +8,6 @@
   "url" : "https://github.com/lilxyzw/NonToon/releases/download/0.2.0/jp.lilxyzw.nontoon-0.2.0.zip?",
   "repo" : "https://lilxyzw.github.io/vpm-repos/vpm.json",
   "vpmDependencies": {
-    "jp.lilxyzw.shadercore": "^0.1.5"
+    "jp.lilxyzw.shadercore": "^0.2.0"
   }
 }
