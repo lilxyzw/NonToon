@@ -32,6 +32,9 @@ void SCCalculateLight(inout SCLightData lightSum, inout SCShadingData sd, inout 
     __SC_PHASE_light__
 
     lightSum.direction += light.direction * dot(light.color, 0.333333);
+
+    // 影なしDirectionalでは逆光時の処理をしない
+    if (light.useShadow || light.type != 1)
     {
         half factor = saturate(dot(light.direction,vertex.Head) * 1 + 0.25);
         factor *= factor;

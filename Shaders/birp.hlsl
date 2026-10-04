@@ -34,7 +34,7 @@ void SCCalculateLight(inout SCLightData lightSum, inout SCShadingData sd, inout 
     lightSum.direction += light.direction * dot(light.color, 0.333333);
 
     // 影なしDirectionalでは逆光時の処理をしない
-    #if !((defined(UNITY_PASS_FORWARDBASE) || defined(DIRECTIONAL)) && !defined(SHADOWS_SCREEN))
+    if (light.useShadow || light.type != 1)
     {
         half factor = saturate(dot(light.direction,vertex.Head) * 1 + 0.25);
         half NdotL = dot(sd.N,light.direction);
@@ -46,7 +46,6 @@ void SCCalculateLight(inout SCLightData lightSum, inout SCShadingData sd, inout 
         #endif
         light.color *= saturate(factor + rim * rim);
     }
-    #endif
 
     lightSum.color += light.color;
 }
