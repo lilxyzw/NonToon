@@ -6,6 +6,8 @@ if (_Enable)
     half3x3 TBN_VD = float3x3(T_VD, B_VD, N_VD);
     half2 uvMat = mul(TBN_VD, sd.N).xy * 0.5 + 0.5;
     half2 uvMat_Detail = mul(TBN_VD, sd.N_detail).xy * 0.5 + 0.5;
-    sd.col.rgb *= lerp(1, SCSampleClamp(_MatCapMultiply, lerp(uvMat, uvMat_Detail, _MatCapMultiplyDetail)).rgb * _MatCapMultiplyColor.rgb, sd.mask[_MatCapMultiplyMaskChannel]);
-    sd.add += SCSampleClamp(_MatCapAdd, lerp(uvMat, uvMat_Detail, _MatCapAddDetail)).rgb * _MatCapAddColor.rgb * sd.mask[_MatCapAddMaskChannel];
+    half matCapMultiplyMask = SCRemap(sd.mask[_MatCapMultiplyMaskChannel], _MatCapMultiplyMaskRemap);
+    half matCapAddMask = SCRemap(sd.mask[_MatCapAddMaskChannel], _MatCapAddMaskRemap);
+    sd.col.rgb *= lerp(1, SCSampleClamp(_MatCapMultiply, lerp(uvMat, uvMat_Detail, _MatCapMultiplyDetail)).rgb * _MatCapMultiplyColor.rgb, matCapMultiplyMask);
+    sd.add += SCSampleClamp(_MatCapAdd, lerp(uvMat, uvMat_Detail, _MatCapAddDetail)).rgb * _MatCapAddColor.rgb * matCapAddMask;
 }

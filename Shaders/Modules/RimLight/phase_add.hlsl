@@ -5,5 +5,6 @@
     rimDetail = saturate(rimDetail + saturate(rim * 10 - 9));
     rim *= rimDetail;
     if (!SCIsGamma()) rim *= rim;
-    sd.add += rim * sd.shadow * sd.mask[_RimLightMaskChannel] * lerp(_RimLightColor.rgb, sd.albedoAlpha.rgb * _RimLightColor.rgb, _RimLightMultiplyAlbedo);
+    half rimLightMask = SCRemap(sd.mask[_RimLightMaskChannel], _RimLightMaskRemap);
+    sd.add += rim * sd.shadow * rimLightMask * lerp(_RimLightColor.rgb, sd.albedoAlpha.rgb * _RimLightColor.rgb, _RimLightMultiplyAlbedo);
 }

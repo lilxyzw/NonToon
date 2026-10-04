@@ -33,5 +33,6 @@
     half a = 1.0-saturate(dot(L, H));
     half fresnelTerm = specular + (1-specular) * a * a * a * a * a;
 
-    sd.postadd += specularTerm * NdotL * fresnelTerm * sd.mask[_SpecularMaskChannel] * light.color * lerp(_SpecularColor.rgb, sd.albedoAlpha.rgb * _SpecularColor.rgb, _SpecularMultiplyAlbedo);
+    half specularMask = SCRemap(sd.mask[_SpecularMaskChannel], _SpecularMaskRemap);
+    sd.postadd += specularTerm * NdotL * fresnelTerm * specularMask * light.color * lerp(_SpecularColor.rgb, sd.albedoAlpha.rgb * _SpecularColor.rgb, _SpecularMultiplyAlbedo);
 }
